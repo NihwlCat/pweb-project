@@ -1,0 +1,93 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+* {
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    --primary-color: #838BC2;
+}
+
+body {
+    background-color: #F2F2F2;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+    color: #FFF;
+}
+
+ul {
+    list-style-type: none;
+    margin-bottom: 0;
+    padding-left: 0;
+}
+
+.card-base {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    border-radius: 15px;
+    background-color: #FFF;
+}
+
+.footer-container {
+    text-align: center;
+    padding-top: 15px;
+    position: fixed;
+    color: #F2F2F2;
+    left: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 85px;
+    background-color: var(--primary-color);
+}
+
+.display-flex {
+    display: flex;
+    flex-direction: row;
+}
+
+.column-flex {
+    display: flex;
+    flex-direction: column;
+}
+
+.content-section {
+    height: 85vh;
+}
+
+.content-section > main {
+    flex: 1;
+}
+
+.product-wrapper {
+    margin: 20px 40px;
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fill,400px);
+    grid-gap: 20px 20px;
+    justify-content: space-between;
+}
+
+.order-wrapper {
+    margin: 20px 60px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill,240px);
+    grid-gap: 20px 20px;
+    justify-content: space-between;
+}
+
+.payload-wrapper {
+    margin: 20px 60px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill,300px);
+    grid-gap: 20px 20px;
+    justify-content: space-between;
+}
+
+.panel-content-section {
+    border: 1px solid purple;
+    width: 100%;
+}

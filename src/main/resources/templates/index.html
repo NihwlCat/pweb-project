@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.thymeleaf.org"
+      layout:decorate="~{utils/layout}">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <section layout:fragment="content" th:classappend="column-flex">
+        <div class="product-wrapper">
+            <div th:each="product : ${data.content}" th:include="~{utils/components :: productCard(${product})}" th:classappend="product-card-container"> </div>
+            <script th:src="@{/js/product-card.js}"></script>
+        </div>
+        <div class="pagination-container" th:include="~{utils/components :: productPageable(${data.totalPages}, ${data.number}, '/')}">
+        </div>
+    </section>
+</body>
+</html>

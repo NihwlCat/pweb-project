@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Loja de Presentes</title>
+    <link rel="stylesheet" th:type="'text/css'" th:href="@{css/main.css}">
+    <link rel="stylesheet" th:type="'text/css'" th:href="@{css/components.css}">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css">
+</head>
+<body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"
+            integrity="sha512-3j3VU6WC5rPQB4Ld1jnLV7Kd5xr+cq9avvhwqzbH/taCRNURoeEpoPBK9pDyeukwSxwRPJ8fDgvYXd6SkaZ2TA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="js/main.js"></script>
+
+    <div th:replace="~{utils/components :: navbar}"></div>
+    <section layout:fragment="content" class="content-section"></section>
+    <div th:replace="~{utils/components :: footer}"></div>
+</body>
+</html>

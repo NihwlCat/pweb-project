@@ -1,10 +1,14 @@
 package iftm.pedro.aproject.services;
 
+import iftm.pedro.aproject.auth.Utils;
 import iftm.pedro.aproject.dtos.OrderDTO;
 import iftm.pedro.aproject.entities.Order;
 import iftm.pedro.aproject.entities.Product;
+import iftm.pedro.aproject.entities.User;
+import iftm.pedro.aproject.entities.utils.Status;
 import iftm.pedro.aproject.repositories.OrderRepository;
 import iftm.pedro.aproject.repositories.ProductRepository;
+import iftm.pedro.aproject.repositories.UserRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -19,15 +23,29 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
+    private final UserRepository userRepository;
 
-    OrderService(OrderRepository orderRepository, ProductRepository productRepository){
+    OrderService(OrderRepository orderRepository, ProductRepository productRepository, UserRepository userRepository){
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
+        this.userRepository = userRepository;
     }
 
     @Transactional(readOnly = true)
     public List<OrderDTO> findAll(){
         return orderRepository.findAll().stream().map(OrderDTO::new).collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<OrderDTO> findAllByUser(){
+        User u = userRepository.findByEmail(Utils.getAuthenticated()).orElseThrow(() -> new RuntimeException("NOT FOUND"));
+        return u.getOrders().stream().map(OrderDTO::new).collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public OrderDTO findById(Long id){
+        Order order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("NOT FOUND"));
+        return new OrderDTO(order);
     }
 
     @Transactional
@@ -43,7 +61,8 @@ public class OrderService {
 
     @Transactional
     public OrderDTO insert(Map<Long, Integer> products){
-        Order order = new Order(null);
+        User u =  userRepository.findByEmail(Utils.getAuthenticated()).orElseThrow(() -> new RuntimeException("NOT FOUND"));
+        Order order = new Order(u);
 
         products.forEach((key,value) -> {
             Product product = productRepository.getById(key);

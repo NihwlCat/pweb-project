@@ -31,7 +31,7 @@ public class OrderDTO {
         });
 
         products = (HashMap<String, Integer>) order.getProductOrders()
-                .stream().collect(Collectors.toMap(x -> x.getProduct().getId() + ", " + x.getProduct().getName(), ProductOrder::getProductAmount));
+                .stream().collect(Collectors.toMap(x -> x.getProduct().getName(), ProductOrder::getProductAmount));
     }
 
     public Long getId() {

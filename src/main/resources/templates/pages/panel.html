@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.thymeleaf.org"
+      layout:decorate="~{utils/panelLayout}">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" type="text/css" href="css/components.css">
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="panel-content-section">
+        <button>Limpar Carrinho</button>
+
+        <h3>Meus presentes</h3>
+        <div class="order-wrapper">
+            <div th:each="order : ${orders}" th:insert="~{utils/components :: orderCard(order)}" th:classappend="order-card-container"></div>
+        </div>
+        <h3>Meus envios</h3>
+        <div class="payload-wrapper">
+            <div th:each="payload : ${payloads}" th:insert="~{utils/components :: payloadCard(payload)}" th:classappend="payload-card-container"></div>
+        </div>
+    </div>
+</main>
+
+<script src="js/main.js"></script>
+</body>
+</html>

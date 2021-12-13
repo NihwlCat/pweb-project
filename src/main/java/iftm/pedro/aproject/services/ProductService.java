@@ -6,6 +6,7 @@ import iftm.pedro.aproject.repositories.ProductRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProductService {
@@ -33,12 +34,14 @@ public class ProductService {
         product.setWeight(dto.getWeight());
     }
 
+    @Transactional
     public ProductDTO insert(ProductDTO dto){
         Product product = new Product();
         dtoToEntity(dto, product);
         return new ProductDTO(repository.save(product));
     }
 
+    @Transactional
     public void update(ProductDTO dto, Long id){
         Product product = repository.getById(id);
         dtoToEntity(dto, product);

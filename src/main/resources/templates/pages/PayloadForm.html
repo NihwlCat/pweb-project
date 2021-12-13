@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.thymeleaf.org"
+      layout:decorate="~{utils/panelLayout}">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../css/main.css" />
+    <link rel="stylesheet" type="text/css" href="../css/components.css" />
+    <title>Envios</title>
+</head>
+<body>
+    <main layout:fragment="content">
+        <div class="ml-4 mt-4 card-base">
+            <h2>ENVIO DE PRESENTE</h2>
+            <div class="d-flex">
+                <div>
+                    <div class="order-card-id"> </div>
+                    <div class="order-card-infos">
+                        <div>
+                            <p>Parcial</p>
+                            <span>29,00</span>
+                        </div>
+                        <div>
+                            <p>Peso</p>
+                            <span>3,8 Kg</span>
+                        </div>
+                    </div>
+                    <div class="order-card-itens">
+                        <table>
+                            <tr>
+                                <td>Suco de Laranja</td>
+                                <td>10</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <form class="d-flex flex-column" id="payload-form" th:method="POST" th:action="@{/panel/sending(orderId=${order.getId()})}" th:object="${addressForm}">
+                    <div>
+                        <label>
+                            <span class="form-label">CEP ORIGEM</span>
+                            <input class="payload-cep form-control input-base" data-mask="00000-000" th:field="*{originLocale}" th:errorclass="is-invalid"/>
+                        </label>
+                        <label>
+                            <span>NÚMERO</span>
+                            <input class="form-control input-base" data-mask="000"/>
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            <span class="form-label">CEP DESTINO</span>
+                            <input class="payload-cep form-control input-base" data-mask="00000-000" th:field="*{destinyLocale}" th:errorclass="is-invalid"/>
+                        </label>
+                        <label>
+                            <span>NÚMERO</span>
+                            <input class="form-control input-base" data-mask="000"/>
+                        </label>
+                    </div>
+
+                    <span th:if="${#fields.hasErrors()}" class="text-danger">CEP Inválido ou não encontrado</span>
+                    <div>
+                        <button type="button" th:onclick="|window.location.href='/panel'|">CANCELAR</button>
+                        <button type="submit" id="payload-submit">ENVIAR</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+                integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+                integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.11.2/jquery.mask.min.js"
+                integrity="sha512-Y/GIYsd+LaQm6bGysIClyez2HGCIN1yrs94wUrHoRAD5RSURkqqVQEU6mM51O90hqS80ABFTGtiDpSXd2O05nw=="
+                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    </main>
+</body>
+</html>

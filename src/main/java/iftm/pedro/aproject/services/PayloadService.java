@@ -1,20 +1,26 @@
 package iftm.pedro.aproject.services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import iftm.pedro.aproject.dtos.Address;
+import iftm.pedro.aproject.dtos.AddressForm;
 import iftm.pedro.aproject.dtos.PayloadDTO;
 import iftm.pedro.aproject.entities.Order;
 import iftm.pedro.aproject.entities.Payload;
+import iftm.pedro.aproject.entities.User;
 import iftm.pedro.aproject.entities.utils.Status;
 import iftm.pedro.aproject.repositories.OrderRepository;
 import iftm.pedro.aproject.repositories.PayloadRepository;
+import iftm.pedro.aproject.repositories.UserRepository;
+import iftm.pedro.aproject.services.exceptions.ServiceException;
 import iftm.pedro.aproject.utils.Utils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.geo.Point;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,8 +72,8 @@ public class PayloadService {
     }
 
     @Transactional(readOnly = true)
-    public List<PayloadDTO> findAll(){
-        return payloadRepository.findAll().stream().map(PayloadDTO::new).collect(Collectors.toList());
+    public Page<PayloadDTO> findAll(Pageable pageable){
+        return payloadRepository.findAll(pageable).map(PayloadDTO::new);
     }
 
     @Transactional
@@ -83,24 +89,46 @@ public class PayloadService {
             order.setStatus(Status.PACKAGED);
             origin = retrieveData(origin.getLocale(), origin.getNumber());
             destiny = retrieveData(destiny.getLocale(), destiny.getNumber());
-            double distance = Utils.calculateDistance(origin.getCoordinates(), destiny.getCoordinates());
-            double price = order.getProductOrders().stream().mapToDouble(ord -> ord.getProduct().getPrice() * ord.getProductAmount()).sum();
+            createPayload(payload, order, origin, destiny);
 
-            payload.setOrder(order);
-            payload.setUsername("NADA");
-            payload.setOrigin(origin.getLocale());
-            payload.setDestiny(destiny.getLocale());
-            payload.setDistance(distance);
-            payload.setPrice(price);
-
-            payloadRepository.save(payload);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (RestClientException ex){
-            System.out.println("ERRO");
+        } catch (IOException | RestClientException e) {
+            throw new ServiceException("CEP Inválido", HttpStatus.BAD_REQUEST);
         }
         return new PayloadDTO();
+    }
+
+    @Transactional
+    public void insert(AddressForm form, Long orderId) throws RestClientException, IOException{
+        Payload payload = new Payload();
+        payload.setId("TX" + orderId); // Provisório
+        Order order = orderRepository.getById(orderId);
+        Address origin = retrieveData(form.getOriginLocale().replace("-",""), form.getOriginNumber());
+        Address destiny = retrieveData(form.getDestinyLocale().replace("-",""), form.getDestinyNumber());
+        order.setStatus(Status.PACKAGED);
+        createPayload(payload, order, origin, destiny);
+    }
+
+    private void createPayload(Payload payload, Order order, Address origin, Address destiny) {
+        double distance = Utils.calculateDistance(origin.getCoordinates(), destiny.getCoordinates());
+        double price = order.getProductOrders().stream().mapToDouble(ord -> ord.getProduct().getPrice() * ord.getProductAmount()).sum();
+
+        payload.setOrder(order);
+        payload.setUsername(iftm.pedro.aproject.auth.Utils.getAuthenticated());
+        payload.setOrigin(origin.getLocale());
+        payload.setDestiny(destiny.getLocale());
+        payload.setDistance(distance);
+        payload.setPrice(price);
+
+        payloadRepository.save(payload);
+    }
+
+    @Transactional
+    public void deliverOrder(String id){
+        Payload p = payloadRepository.findById(id).orElseThrow(() -> new RuntimeException("NOT FOUND"));
+        Order o = p.getOrder();
+        o.setStatus(Status.DELIVERED);
+        orderRepository.save(o);
+        payloadRepository.delete(p);
     }
 
     @Transactional
@@ -113,4 +141,11 @@ public class PayloadService {
             throw new RuntimeException("Integrity Violation. You cannot delete a category with products");
         }
     }
+
+    @Transactional(readOnly = true)
+    public List<PayloadDTO> findAllByUser() {
+        return payloadRepository.findByUsername(iftm.pedro.aproject.auth.Utils.getAuthenticated())
+                .stream().map(PayloadDTO::new).collect(Collectors.toList());
+    }
+
 }
