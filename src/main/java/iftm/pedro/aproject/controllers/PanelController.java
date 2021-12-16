@@ -8,6 +8,7 @@ import iftm.pedro.aproject.services.ProductService;
 import iftm.pedro.aproject.services.exceptions.ServiceException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -84,7 +85,7 @@ public class PanelController {
 
     @GetMapping("/items")
     public ModelAndView renderItemPage(Pageable pageable, HttpServletRequest request){
-        var products = prodService.findAll(PageRequest.of(pageable.getPageNumber(), 4));
+        var products = prodService.findAll(PageRequest.of(pageable.getPageNumber(), 4,Sort.by(Sort.Direction.DESC, "id")));
         return new ModelAndView("/pages/Items","data", products);
     }
 
@@ -100,16 +101,13 @@ public class PanelController {
             dto = prodService.findById(Long.parseLong(id));
         }
 
-        return new ModelAndView("/pages/ItemForm","product",dto);
+        return new ModelAndView("/pages/ItemForm","productDTO",dto);
     }
 
     @PostMapping("/items/creating")
     public ModelAndView createProduct(@Valid @ModelAttribute ProductDTO productDTO, BindingResult result){
-        System.out.println("PRODUTO: " + productDTO.getName());
-
         if(result.hasErrors()){
-            System.out.println("ERROS");
-            new ModelAndView("pages/ItemForm","product",productDTO);
+            return new ModelAndView("pages/ItemForm","productDTO",productDTO);
         }
 
         prodService.insert(productDTO);
@@ -117,13 +115,13 @@ public class PanelController {
         return new ModelAndView("redirect:/panel/items");
     }
 
+    // Nome do objeto tem que ser igual ao nome da classe com a primeira letra minuscula
     @PutMapping("/items/{id}")
     public ModelAndView updateProduct(@Valid @ModelAttribute ProductDTO productDTO, BindingResult result, @PathVariable String id){
-        System.out.println("PRODUTO: " + productDTO.getName());
-
         if(result.hasErrors()){
-            System.out.println("ERROS");
-            new ModelAndView("pages/ItemForm","product",productDTO);
+
+            result.getFieldErrors().forEach(System.out::println);
+            return new ModelAndView("pages/ItemForm","productDTO",productDTO);
         }
 
         prodService.update(productDTO,Long.parseLong(id));
@@ -141,5 +139,11 @@ public class PanelController {
     public String deliverPayload(@RequestParam String id, RedirectAttributes attributes){
         pService.deliverOrder(id);
         return "redirect:/panel/payloads";
+    }
+
+    @DeleteMapping("/items/{id}")
+    public String deleteItem(@PathVariable Long id){
+        prodService.delete(id);
+        return "redirect:/panel/items";
     }
 }

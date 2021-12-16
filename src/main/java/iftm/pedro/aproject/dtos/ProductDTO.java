@@ -2,12 +2,21 @@ package iftm.pedro.aproject.dtos;
 
 import iftm.pedro.aproject.entities.Product;
 
+import javax.validation.constraints.NotBlank;
+
 public class ProductDTO {
     private Long id;
+
+    @NotBlank(message = "Nome não pode ser nulo")
     private String name;
+
+    @NotBlank(message = "Descrição não pode ser nula")
     private String description;
+
     private double price;
     private double weight;
+
+    @NotBlank(message = "A imagem não pode ser nula")
     private String imgUrl;
 
     public ProductDTO() {

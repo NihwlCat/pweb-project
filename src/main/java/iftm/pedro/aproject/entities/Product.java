@@ -90,6 +90,7 @@ public class Product implements Serializable {
         return imgUrl;
     }
 
+    @Column(name = "IMG_URL")
     public void setImgUrl(String imgUrl) {
         this.imgUrl = imgUrl;
     }

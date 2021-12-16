@@ -1,13 +1,16 @@
 package iftm.pedro.aproject.dtos;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 public class AddressForm {
 
     @Pattern(regexp = "^\\d{5}-\\d{3}$", message = "Illegal CEP Format")
+    @NotBlank
     private String originLocale;
 
     @Pattern(regexp = "^\\d{5}-\\d{3}$", message = "Illegal CEP Format")
+    @NotBlank
     private String destinyLocale;
 
     private int originNumber;

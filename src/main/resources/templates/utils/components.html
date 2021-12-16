@@ -2,46 +2,11 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 
-<div th:fragment="productPageable(totalPages, currentPage, path)" class="pagination-container">
-    <a th:href="@{${path}(page=${currentPage - 1})}" style="margin-right: 12px;" th:class="${currentPage > 0 ? 'active-page' : 'inactive-page' }"><i class="fas fa-chevron-left"></i></a>
-    <a th:href="@{${path}(page=${number})}" th:each="number : ${#numbers.sequence(0, totalPages - 1)}" class="pagination-content" th:classappend="${currentPage == number ? 'active' : ''}" th:text="${number + 1}"></a>
-    <a th:href="@{${path}(page=${currentPage + 1})}" th:class="${currentPage < (totalPages - 1) ? 'active-page' : 'inactive-page' }"><i class="fas fa-chevron-right"></i></a>
-</div>
-
-<div th:fragment="productCard(product)" class="product-card-container">
-    <h3 th:text="${product.name}">Título do Produto</h3>
-    <div class="product-card-content">
-        <img th:src="${product.imgUrl}" alt="Imagem do produto">
-        <div>
-            <p th:text="${product.description}">Descrição do produto</p>
-            <div th:if="${T(iftm.pedro.aproject.auth.Utils).isAuthenticated()}" class="product-card-quantity-box">
-                <span>Quantidade</span>
-                <div>
-                    <button type="button" data-quantity="minus" th:attr="item-target=${product.id}">-</button>
-                    <input type="text" th:name="${product.id}" value="1" disabled>
-                    <button type="button" data-quantity="plus" th:attr="item-target=${product.id}">+</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div th:if="${T(iftm.pedro.aproject.auth.Utils).isAuthenticated() && T(iftm.pedro.aproject.controllers.HomeController).isItemSelected(#httpServletRequest, product.id)}" class="product-card-buy product-added">ADICIONADO</div>
-    <div class="product-card-buy" th:if="${T(iftm.pedro.aproject.auth.Utils).isAuthenticated() && !T(iftm.pedro.aproject.controllers.HomeController).isItemSelected(#httpServletRequest, product.id)}">
-        <span th:inline="text"> <b>R$</b> [[${product.price}]]</span>
-        <button th:id="${product.id}"> <i class="fas fa-cart-plus"></i> ADICIONAR AO CARRINHO</button>
-    </div>
-
-    <div class="product-price-container" th:if="${!T(iftm.pedro.aproject.auth.Utils).isAuthenticated()}">
-        <span class="price-currency">R$</span>
-        <h3 class="price" th:inline="text">[[${product.price}]]</h3>
-    </div>
-</div>
-
 <nav th:fragment="navbar" class="navbar-container">
     <a class="home-button" th:href="@{/}">
-        <img alt="" th:src="@{/images/card_giftcard.svg}">
-        <h2>Presentes</h2>
+        <h3>Loja de <br> Presentes</h3>
     </a>
+
     <ul class="menu-container">
         <li th:onclick="|window.location.href='@{/}'|" th:classappend="${#httpServletRequest.getRequestURI().equals('/') ? 'active' : ''}">
             CATÁLOGO
@@ -62,20 +27,45 @@
                 <span th:text="${T(iftm.pedro.aproject.auth.Utils).getAuthenticated()}"></span>
             </div>
         </div>
-        <script th:inline="javascript">
-            let cookie = $.cookie("cart")
-            let count = 0;
-            if(cookie){
-                for (let i = 0; i < cookie.length; i++) {
-                    if(cookie[i] === ":"){
-                        count++
-                    }
-                }
-            }
-            $('.menu-client-cart > div').text(count)
-        </script>
+        <script th:inline="javascript">cardCount()</script>
     </th:block>
 </nav>
+
+<div th:fragment="productPageable(totalPages, currentPage, path)" class="pagination-container">
+    <a th:href="@{${path}(page=${currentPage - 1})}" style="margin-right: 12px;" th:class="${currentPage > 0 ? 'active-page' : 'inactive-page' }"><i class="fas fa-chevron-left"></i></a>
+    <a th:href="@{${path}(page=${number})}" th:each="number : ${#numbers.sequence(0, totalPages - 1)}" class="pagination-content" th:classappend="${currentPage == number ? 'active' : ''}" th:text="${number + 1}"></a>
+    <a th:href="@{${path}(page=${currentPage + 1})}" th:class="${currentPage < (totalPages - 1) ? 'active-page' : 'inactive-page' }"><i class="fas fa-chevron-right"></i></a>
+</div>
+
+<!--/* @thymesVar id="product" type="iftm.pedro.aproject.dtos.ProductDTO" */-->
+<div th:fragment="productCard(product)" class="product-card-container">
+    <h3 th:text="${product.name}"></h3>
+    <div class="product-card-content">
+        <img th:src="${product.imgUrl}" alt="Imagem do produto">
+        <div>
+            <p th:text="${product.description}">Descrição do produto</p>
+            <div th:if="${T(iftm.pedro.aproject.auth.Utils).isAuthenticated()}" class="product-card-quantity-box">
+                <span>Quantidade</span>
+                <div>
+                    <button type="button" data-quantity="minus" th:attr="item-target=${product.id}">-</button>
+                    <input type="text" th:name="${product.id}" value="1" disabled>
+                    <button type="button" data-quantity="plus" th:attr="item-target=${product.id}">+</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${T(iftm.pedro.aproject.auth.Utils).isAuthenticated() && T(iftm.pedro.aproject.controllers.HomeController).isItemSelected(#httpServletRequest, product.id)}" class="product-card-buy product-added">ADICIONADO</div>
+    <div class="product-card-buy" th:if="${T(iftm.pedro.aproject.auth.Utils).isAuthenticated() && !T(iftm.pedro.aproject.controllers.HomeController).isItemSelected(#httpServletRequest, product.id)}">
+        <span th:inline="text"> <b>R$</b> [[${#numbers.formatDecimal(product.price, 0, 'POINT', 2, 'COMMA')}]]</span>
+        <button th:id="${product.id}"> <i class="fas fa-cart-plus"></i> ADICIONAR AO CARRINHO</button>
+    </div>
+
+    <div class="product-price-container" th:if="${!T(iftm.pedro.aproject.auth.Utils).isAuthenticated()}">
+        <span class="price-currency">R$</span>
+        <h3 class="price" th:text="${#numbers.formatDecimal(product.price, 0, 'POINT', 2, 'COMMA')}"></h3>
+    </div>
+</div>
 
 <aside th:fragment="asidebar" class="aside-menu-container">
     <ul>
@@ -98,32 +88,32 @@
 
 <!--/* @thymesVar id="order" type="iftm.pedro.aproject.dtos.OrderDTO" */-->
 <div th:fragment="orderCard(order)">
-    <div class="order-card-id" th:text="${order.getId()}"> </div>
+    <div class="order-card-id" th:text="${'# ' + order.getId()}"> </div>
     <div class="order-card-infos">
         <div>
-            <p>Parcial</p>
-            <span th:text="${order.getSubTotal()}">29,00</span>
+            <p>SUBTOTAL</p>
+            <span th:text="${'R$ ' + #numbers.formatDecimal(order.getSubTotal(), 0, 'POINT', 2, 'COMMA')}"></span>
         </div>
         <div>
-            <p>Peso</p>
-            <span th:text="${order.getTotalWeight()}">3,8 Kg</span>
+            <p>PESO</p>
+            <span th:text="${#numbers.formatDecimal(order.getTotalWeight(),1,2,'COMMA') + ' Kg'}"></span>
         </div>
     </div>
-    <div class="order-card-itens">
+    <div class="order-card-items">
         <table>
             <tr th:each="item : ${order.getProducts()}">
                 <td th:text="${item.getKey()}"></td>
-                <td th:text="${item.getValue()}"></td>
+                <td th:text="${#numbers.formatInteger(item.getValue(),2)}"></td>
             </tr>
         </table>
     </div>
     <div class="order-card-status" th:text="${order.getStatus()}"></div>
 
-    <th:block th:if="${!order.getStatus().equals('ENCOMENDA FEITA')}">
+    <th:block th:if="${!order.getStatus().equals('ENCOMENDA FEITA') && !#httpServletRequest.getRequestURI().equals('/panel/sending')}">
         <div class="order-card-buttons">
-            <button class="send">
-                <a th:href="@{/panel/sending(id=${order.getId()})}">ENVIAR</a>
-            </button>
+            <a th:href="@{/panel/sending(id=${order.getId()})}">
+            <button class="send">ENVIAR</button>
+            </a>
             <form th:method="delete" th:action="@{/panel(orderId=${order.getId()})}">
                 <button class="delete">EXCLUIR</button>
             </form>
@@ -133,7 +123,7 @@
 
 <!--/* @thymesVar id="payload" type="iftm.pedro.aproject.dtos.PayloadDTO" */-->
 <div th:fragment="payloadCard(payload)">
-    <div class="payload-card-id" th:text="${payload.getId()}"></div>
+    <div class="payload-card-id" th:text="${'# ' + payload.getId()}"></div>
     <div class="payload-card-infos">
         <h4 th:text="${payload.getUsername()}"></h4>
         <div>
@@ -145,41 +135,50 @@
             <span th:text="${payload.getDestiny()}"></span>
         </div>
     </div>
-    <div class="payload-card-order" th:text="${payload.getOrder().getId()}"></div>
+    <div class="payload-card-order" th:text="${'PEDIDO: # ' + payload.getOrder().getId()}"></div>
     <div class="payload-card-total">
         <div>
             <p>TOTAL</p>
-            <span th:text="${payload.getPrice()}"></span>
+            <span th:text="${'R$ ' + #numbers.formatDecimal(payload.getPrice(), 0, 'POINT', 2, 'COMMA')}"></span>
         </div>
         <div>
             <p>DISTÂNCIA</p>
-            <span th:text="${payload.getDistance()}"></span>
+            <span th:text="${#numbers.formatDecimal(payload.getDistance(),1,2,'COMMA') + ' KM'}"></span>
         </div>
     </div>
 </div>
 
 <!--/* @thymesVar id="product" type="iftm.pedro.aproject.dtos.ProductDTO" */-->
-<div th:fragment="productCardAdmin(product)" class="card-base">
-    <div class="text-center border-right py-3">
+<div th:fragment="productCardAdmin(product)">
+    <div class="col-2 text-center border-right py-3">
         <img th:alt="${product.name}" th:src="${product.imgUrl}" class="product-card-admin-img"/>
     </div>
-    <div class="col-7 py-3">
+    <div class="col-3 py-3">
         <h3 class="admin-card-content" th:text="${product.name}"> </h3>
-        <div>
-            asasa
+        <div class="d-flex">
+            <div class="product-price-container">
+                <span class="price-currency">R$</span>
+
+                <h3 class="price" th:inline="text">[[${#numbers.formatDecimal(product.price, 0, 'POINT', 2, 'COMMA')}]]</h3>
+            </div>
+            <div class="product-price-container">
+                <span class="price-currency">(Kg)</span>
+                <h3 class="price" th:inline="text">[[${#numbers.formatDecimal(product.weight,1,2,'COMMA')}]]</h3>
+            </div>
         </div>
     </div>
+    <div class="col-4 product-admin-description" th:text="${product.description}">
+
+    </div>
     <div class="col-3 pt-3 pr-5">
-        <a th:href="@{|/panel/items/${product.getId()}|}"><button type="button" class="btn btn-outline-light btn-block font-weight-bold ">EDITAR</button></a>
-        <button type="button" class="btn btn-outline-danger btn-block font-weight-bold ">
-        <strong>EXCLUIR</strong>
-        </button>
+        <a th:href="@{|/panel/items/${product.getId()}|}"><button type="button" class="btn btn-outline-secondary btn-block font-weight-bold ">EDITAR</button></a>
+        <form th:action="@{|/panel/items/${product.getId()}|}" th:method="delete"><button type="submit" class="btn btn-outline-danger btn-block font-weight-bold mt-3"><strong>EXCLUIR</strong></button></form>
     </div>
 </div>
 
 <!--/* @thymesVar id="payload" type="iftm.pedro.aproject.dtos.PayloadDTO" */-->
 <div th:fragment="payloadCardAdmin(payload)">
-    <div class="payload-card-id" th:text="${payload.getId()}"></div>
+    <div class="payload-card-id" th:text="${'# ' + payload.getId()}"></div>
     <div class="payload-card-infos">
         <h4 th:text="${payload.getUsername()}"></h4>
         <div>
@@ -191,20 +190,19 @@
             <span th:text="${payload.getDestiny()}"></span>
         </div>
     </div>
-    <div class="payload-card-order" th:text="${payload.getOrder().getId()}"></div>
+    <div class="payload-card-order" th:text="${'PEDIDO # ' + payload.getOrder().getId()}"></div>
     <div class="payload-card-total">
         <div>
             <p>TOTAL</p>
-            <span th:text="${payload.getPrice()}"></span>
+            <span th:text="${'R$ ' + #numbers.formatDecimal(payload.getPrice(), 0, 'POINT', 2, 'COMMA')}"></span>
         </div>
         <div>
             <p>DISTÂNCIA</p>
-            <span th:text="${payload.getDistance()}"></span>
+            <span th:text="${#numbers.formatDecimal(payload.getDistance(),1,2,'COMMA') + ' KM'}"></span>
         </div>
     </div>
-    <div><form th:method="delete" th:action="@{/panel/payloads(id=${payload.getId()})}"><button type="submit">ENTREGAR</button></form><div>
+    <div>
+        <form th:method="delete" th:action="@{/panel/payloads(id=${payload.getId()})}"><button class="btn btn-sm btn-secondary w-100" type="submit">ENTREGAR</button></form>
+    </div>
 </div>
-
-
-
 

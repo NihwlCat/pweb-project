@@ -7,15 +7,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" type="text/css" href="../css/main.css" />
   <link rel="stylesheet" type="text/css" href="../css/components.css" />
-  <title>Encomendas</title>
+  <title>Loja de Presentes - Painel</title>
 </head>
 <body>
 <main layout:fragment="content">
-  <div class="admin-list-container">
-    <div th:each="payload : ${data.content}" th:include="~{utils/components :: payloadCardAdmin(${payload})}" th:classappend="payload-card-container"> </div>
+  <div class="panel-content-section">
+    <h3>Entrega das encomendas</h3>
+    <div class="payload-wrapper">
+      <div th:each="payload : ${data.content}" th:include="~{utils/components :: payloadCardAdmin(${payload})}" th:classappend="payload-card-container"> </div>
+    </div>
+    <div class="pagination-container" th:if="${!data.getContent().isEmpty()}" th:include="~{utils/components :: productPageable(${data.totalPages}, ${data.number}, '/panel/payloads')}"></div>
   </div>
-  <div class="pagination-container" th:include="~{utils/components :: productPageable(${data.totalPages}, ${data.number}, '/panel/payloads')}"></div>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
             integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"

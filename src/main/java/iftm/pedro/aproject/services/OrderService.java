@@ -5,7 +5,6 @@ import iftm.pedro.aproject.dtos.OrderDTO;
 import iftm.pedro.aproject.entities.Order;
 import iftm.pedro.aproject.entities.Product;
 import iftm.pedro.aproject.entities.User;
-import iftm.pedro.aproject.entities.utils.Status;
 import iftm.pedro.aproject.repositories.OrderRepository;
 import iftm.pedro.aproject.repositories.ProductRepository;
 import iftm.pedro.aproject.repositories.UserRepository;

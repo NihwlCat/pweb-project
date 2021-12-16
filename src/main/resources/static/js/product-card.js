@@ -1,35 +1,3 @@
-
-const makeRequest = ({type = 'POST', url, contentType = 'application/json', data, success, error}) => {
-    $.ajax({
-        type,
-        url,
-        contentType,
-        data,
-        success,
-        error
-    })
-}
-
-const updateCartAmount = () => {
-    let cookie = $.cookie("cart")
-
-    let count = 0;
-    if(cookie){
-        for (let i = 0; i < cookie.length; i++) {
-            if(cookie[i] === ":"){
-                count++
-            }
-        }
-    }
-    $('.menu-client-cart > div').text(count)
-}
-
-const changeItemCardButton = (e) => {
-    const parent = e.target.parentNode
-    $(parent).addClass('product-added').text('ADICIONADO')
-}
-
-
 jQuery(document).ready(function () {
     $('[data-quantity="plus"]').click(function (e) {
         e.preventDefault();
@@ -57,18 +25,29 @@ jQuery(document).ready(function () {
         window.location.replace("/")
     })
 
-    $('.menu-client-cart > img').click(e => {
-        makeRequest({
-            url: '/create-order',
-            data: $.cookie("cart"),
-            success: () => {console.log('DEU CERTO')},
-            error: () => {console.log('ERRO')}
-        })
+    $('.menu-client-cart > img').click(() => {
 
-        $.removeCookie("cart")
+        if($.cookie("cart")){
+            const value = confirm("Deseja criar o pedido?")
+
+            if(value){
+                makeRequest({
+                    url: '/create-order',
+                    data: $.cookie("cart"),
+                    success: () => {
+                        $.removeCookie("cart")
+                        cardCount()
+                    },
+                    error: () => {
+                        console.log('ERRO')
+                    }
+                })
+            }
+        } else {
+            alert("Nenhum pedido no carrinho")
+        }
+
     })
-
-
 
     $('.product-card-buy > button').click(e => {
         e.preventDefault();
@@ -79,8 +58,13 @@ jQuery(document).ready(function () {
         makeRequest({
             url: '/',
             data: field + ',' + currentVal,
-            success: () => {updateCartAmount(); changeItemCardButton(e)},
-            error: () => {console.log('ERRO')}
+            success: () => {
+                cardCount();
+                changeItemCardButton(e)
+            },
+            error: () => {
+                console.log('ERRO')
+            }
         })
     })
 });

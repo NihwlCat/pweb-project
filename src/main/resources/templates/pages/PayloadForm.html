@@ -11,57 +11,37 @@
 </head>
 <body>
     <main layout:fragment="content">
-        <div class="ml-4 mt-4 card-base">
+        <div class="card-base form-sending">
             <h2>ENVIO DE PRESENTE</h2>
-            <div class="d-flex">
-                <div>
-                    <div class="order-card-id"> </div>
-                    <div class="order-card-infos">
-                        <div>
-                            <p>Parcial</p>
-                            <span>29,00</span>
-                        </div>
-                        <div>
-                            <p>Peso</p>
-                            <span>3,8 Kg</span>
-                        </div>
-                    </div>
-                    <div class="order-card-itens">
-                        <table>
-                            <tr>
-                                <td>Suco de Laranja</td>
-                                <td>10</td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-                <form class="d-flex flex-column" id="payload-form" th:method="POST" th:action="@{/panel/sending(orderId=${order.getId()})}" th:object="${addressForm}">
-                    <div>
+            <div class="mt-3 ml-3 d-flex">
+                <div th:include="~{utils/components :: orderCard(${order})}" th:classappend="order-card-container"></div>
+                <form class="ml-5 d-flex flex-column" id="payload-form" th:method="POST" th:action="@{/panel/sending(orderId=${order.getId()})}" th:object="${addressForm}">
+                    <div class="sending-form-label">
                         <label>
                             <span class="form-label">CEP ORIGEM</span>
                             <input class="payload-cep form-control input-base" data-mask="00000-000" th:field="*{originLocale}" th:errorclass="is-invalid"/>
                         </label>
                         <label>
                             <span>NÚMERO</span>
-                            <input class="form-control input-base" data-mask="000"/>
+                            <input class="form-control input-base" data-mask="0000" th:field="*{originNumber}"/>
                         </label>
                     </div>
-                    <div>
+                    <div class="sending-form-label">
                         <label>
                             <span class="form-label">CEP DESTINO</span>
                             <input class="payload-cep form-control input-base" data-mask="00000-000" th:field="*{destinyLocale}" th:errorclass="is-invalid"/>
                         </label>
                         <label>
                             <span>NÚMERO</span>
-                            <input class="form-control input-base" data-mask="000"/>
+                            <input class="form-control input-base" data-mask="0000" th:field="*{destinyNumber}"/>
                         </label>
                     </div>
-
-                    <span th:if="${#fields.hasErrors()}" class="text-danger">CEP Inválido ou não encontrado</span>
-                    <div>
-                        <button type="button" th:onclick="|window.location.href='/panel'|">CANCELAR</button>
-                        <button type="submit" id="payload-submit">ENVIAR</button>
+                    <div class="sending-form-label">
+                        <button class="btn btn-danger" type="button" th:onclick="|window.location.href='/panel'|">CANCELAR</button>
+                        <button class="btn btn-secondary" type="submit" id="payload-submit">ENVIAR</button>
                     </div>
+
+                    <span th:if="${#fields.hasErrors()}" class="text-danger">CEP INVÁLIDO OU NÃO ENCONTRADO</span>
                 </form>
             </div>
         </div>

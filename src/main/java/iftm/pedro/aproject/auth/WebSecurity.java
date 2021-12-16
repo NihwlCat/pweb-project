@@ -37,6 +37,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         security.csrf().disable().authorizeRequests()
                 .antMatchers(HttpMethod.GET,"/").permitAll()
                 .antMatchers("/h2/**").permitAll()
+                .antMatchers("/error").permitAll()
                 .antMatchers("/css/**","/images/**","/js/**", "/scss/**").permitAll()
                 .antMatchers("/panel/items/**").hasAuthority("ADMIN")
                 .antMatchers("/panel/payloads/**").hasAuthority("ADMIN")
