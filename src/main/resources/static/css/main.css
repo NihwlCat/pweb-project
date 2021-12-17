@@ -66,6 +66,7 @@ ul {
 
 .product-wrapper {
     margin: 20px 40px;
+    padding-top: 10px;
     flex: 1;
     display: grid;
     grid-template-columns: repeat(auto-fill,400px);
@@ -127,5 +128,39 @@ ul {
 .product-form-label span {
     font-size: 14px;
     font-weight: 600;
+}
 
+
+
+/*FORM LOGIN*/
+.form-login {
+    margin-top: 80px;
+    width: 400px;
+    height: 410px;
+}
+
+.form-login > form {
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+    align-items: center;
+}
+
+.form-login > h3 {
+    text-align: center;
+    margin-bottom: 40px;
+    margin-top: 20px;
+}
+
+.form-login > form input {
+    width: 300px;
+}
+
+.form-login > form button {
+    margin-top: 40px;
+}
+
+.login-image {
+    height: 750px;
+    width: 750px;
 }

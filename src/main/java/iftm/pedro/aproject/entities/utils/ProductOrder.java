@@ -2,7 +2,6 @@ package iftm.pedro.aproject.entities.utils;
 
 import iftm.pedro.aproject.entities.Order;
 import iftm.pedro.aproject.entities.Product;
-import iftm.pedro.aproject.entities.utils.ProductOrderPK;
 import javax.persistence.*;
 
 @Entity

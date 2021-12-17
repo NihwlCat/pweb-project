@@ -4,7 +4,6 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import iftm.pedro.aproject.entities.User;
 import iftm.pedro.aproject.services.UserService;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -30,6 +29,11 @@ public class TokenAuthFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
 
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+        response.sendRedirect("/login");
+    }
+
     public TokenAuthFilter(UserService service, AuthenticationManager authenticationManager) {
         this.service = service;
         this.authenticationManager = authenticationManager;
@@ -38,26 +42,23 @@ public class TokenAuthFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
+        String username = this.obtainUsername(request);
+        username = username != null ? username : "";
+        username = username.trim();
+        String password = this.obtainPassword(request);
+        password = password != null ? password : "";
 
-        System.out.println(username + "," + password);
+        final User user = service.recoverUser(username);
 
-        try {
-            if(username != null && password != null){
-                User user = service.recoverUser(username);
-                return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                        user.getEmail(),
-                        password,
-                        Collections.singletonList(new SimpleGrantedAuthority(user.getRole()))
-                ));
-            }
+        String role = user != null ? user.getRole() : "COMMON";
 
-        } catch (RuntimeException ex){
-            System.out.println("MSG:" + ex.getMessage());
-            response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        }
-        return null;
+        System.out.println("PASSWORD: " + password + ", USERNAME: " + username);
+
+        return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                username,
+                password,
+                Collections.singletonList(new SimpleGrantedAuthority(role)
+        )));
     }
 
     @Override

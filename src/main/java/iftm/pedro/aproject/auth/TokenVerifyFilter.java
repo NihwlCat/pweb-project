@@ -54,7 +54,6 @@ public class TokenVerifyFilter extends BasicAuthenticationFilter {
 
         } catch (JWTVerificationException ex){
             SecurityContextHolder.clearContext();
-            System.out.println(ex.getMessage());
             return null;
         }
     }

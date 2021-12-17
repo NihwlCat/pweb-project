@@ -23,6 +23,7 @@ public class ExceptionHandling {
     public String handleAllExceptions(HttpServletRequest request, Exception exception) {
         PrintWriter pw = new PrintWriter(new StringWriter());
         exception.printStackTrace(pw);
+        System.out.println("ENTROU");
         return "error";
     }
 }

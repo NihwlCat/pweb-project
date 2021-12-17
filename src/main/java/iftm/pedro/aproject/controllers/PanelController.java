@@ -5,12 +5,10 @@ import iftm.pedro.aproject.dtos.ProductDTO;
 import iftm.pedro.aproject.services.OrderService;
 import iftm.pedro.aproject.services.PayloadService;
 import iftm.pedro.aproject.services.ProductService;
-import iftm.pedro.aproject.services.exceptions.ServiceException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
@@ -78,7 +76,6 @@ public class PanelController {
 
     @DeleteMapping
     public String deleteOrder(@RequestParam Long orderId){
-        System.out.println(orderId);
         oService.delete(orderId);
         return "redirect:/panel";
     }
@@ -92,7 +89,6 @@ public class PanelController {
 
     @GetMapping("/items/{id}")
     public ModelAndView renderItemForm(@PathVariable String id){
-        System.out.println("ID: " + id);
         ProductDTO dto;
 
         if(id.equals("creating")){
@@ -119,7 +115,6 @@ public class PanelController {
     @PutMapping("/items/{id}")
     public ModelAndView updateProduct(@Valid @ModelAttribute ProductDTO productDTO, BindingResult result, @PathVariable String id){
         if(result.hasErrors()){
-
             result.getFieldErrors().forEach(System.out::println);
             return new ModelAndView("pages/ItemForm","productDTO",productDTO);
         }

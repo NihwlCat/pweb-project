@@ -20,12 +20,17 @@ public class UserService implements UserDetailsService {
     }
 
     public User recoverUser (String email){
-        return repository.findByEmail(email).orElseThrow(() -> new RuntimeException("Nao encontrado"));
+        return repository.findByEmail(email).orElse(null);
     }
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         final User user = recoverUser(s);
+
+        if(user == null){
+            throw new UsernameNotFoundException("Username not found");
+        }
+
         return org.springframework.security.core.userdetails.User.withUsername(user.getEmail())
                 .password(user.getPassword())
                 .authorities(Collections.singletonList(new SimpleGrantedAuthority(user.getRole())))

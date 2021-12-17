@@ -38,14 +38,14 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET,"/").permitAll()
                 .antMatchers("/h2/**").permitAll()
                 .antMatchers("/error").permitAll()
-                .antMatchers("/css/**","/images/**","/js/**", "/scss/**").permitAll()
+                .antMatchers("/css/**","/images/**","/js/**").permitAll()
                 .antMatchers("/panel/items/**").hasAuthority("ADMIN")
                 .antMatchers("/panel/payloads/**").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                     .addFilter(new TokenAuthFilter(service, authenticationManager()))
                     .addFilter(new TokenVerifyFilter(authenticationManager()))
-                .formLogin().permitAll();
+                .formLogin().loginPage("/login").permitAll();
 
         security.headers().frameOptions().disable();
     }

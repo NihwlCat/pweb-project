@@ -1,12 +1,16 @@
 <!DOCTYPE html>
-<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.thymeleaf.org">
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.thymeleaf.org"
+      layout:decorate="~{utils/layout}">
 <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loja de Presentes</title>
 </head>
 <body>
-
-<h1>ERRO</h1>
-
+<section layout:fragment="content">
+    <div class="text-center">
+      <img class="login-image" th:src="@{~/images/error-amico.svg}" alt="Error"/>
+    </div>
+</section>
 </body>
 </html>

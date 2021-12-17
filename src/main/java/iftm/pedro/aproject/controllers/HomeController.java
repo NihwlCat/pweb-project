@@ -54,6 +54,11 @@ public class HomeController {
         return new ModelAndView("index","data", products);
     }
 
+    @GetMapping(value = {"/login", "auth.html"})
+    public String loadLoginView() throws IOException {
+        return "auth";
+    }
+
     @PostMapping(value = "/create-order")
     public ResponseEntity<Void> createOrder(@RequestBody Map<Long, Integer> products){
         var body = oService.insert(products);
@@ -62,7 +67,6 @@ public class HomeController {
 
     @PostMapping(value = "/",consumes = "application/json")
     public ResponseEntity<Void> insertItems(HttpServletResponse response, HttpServletRequest request, @RequestBody String body) throws IOException {
-        System.out.println("ENTROU AQUI");
         ObjectMapper mapper = new ObjectMapper();
         String[] splatted = body.split(",");
         var obj = request.getCookies();
