@@ -70,13 +70,13 @@ public class PanelController {
             return new ModelAndView("pages/PayloadForm","order",obj);
         }
 
-        return new ModelAndView("redirect:panel");
+        return new ModelAndView("redirect:/panel");
     }
 
     @DeleteMapping
     public String deleteOrder(@RequestParam Long orderId){
         oService.delete(orderId);
-        return "redirect:panel";
+        return "redirect:/panel";
     }
 
     @GetMapping("/items")
@@ -107,7 +107,7 @@ public class PanelController {
 
         prodService.insert(productDTO);
 
-        return new ModelAndView("redirect:panel/items");
+        return new ModelAndView("redirect:/panel/items");
     }
 
     // Nome do objeto tem que ser igual ao nome da classe com a primeira letra minuscula
@@ -119,7 +119,7 @@ public class PanelController {
         }
 
         prodService.update(productDTO,Long.parseLong(id));
-        return new ModelAndView("redirect:panel/items");
+        return new ModelAndView("redirect:/panel/items");
     }
 
 
@@ -132,12 +132,12 @@ public class PanelController {
     @DeleteMapping("/payloads")
     public String deliverPayload(@RequestParam String id, RedirectAttributes attributes){
         pService.deliverOrder(id);
-        return "redirect:panel/payloads";
+        return "redirect:/panel/payloads";
     }
 
     @DeleteMapping("/items/{id}")
     public String deleteItem(@PathVariable Long id){
         prodService.delete(id);
-        return "redirect:panel/items";
+        return "redirect:/panel/items";
     }
 }
