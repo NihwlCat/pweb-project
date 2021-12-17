@@ -42,7 +42,7 @@ public class PanelController {
         var payloads = pService.findAllByUser();
         models.put("orders",orders);
         models.put("payloads",payloads);
-        return new ModelAndView("/pages/panel",models);
+        return new ModelAndView("pages/panel",models);
     }
 
     @GetMapping(value = "/sending")
@@ -52,7 +52,7 @@ public class PanelController {
         AddressForm form = new AddressForm();
         models.put("order", obj);
         models.put("addressForm",form);
-        return new ModelAndView("/pages/PayloadForm",models);
+        return new ModelAndView("pages/PayloadForm",models);
     }
 
     // The BindingResult must come right after the model object that is validated or else Spring will fail to validate the object and throw an exception
@@ -62,7 +62,6 @@ public class PanelController {
         try {
             pService.insert(addressForm, orderId);
         } catch (RestClientException | IOException ex){
-            System.out.println("ENTROU AQUI");
             result.addError(new ObjectError("cep", "Oi teste"));
         }
 
@@ -71,19 +70,19 @@ public class PanelController {
             return new ModelAndView("pages/PayloadForm","order",obj);
         }
 
-        return new ModelAndView("redirect:/panel");
+        return new ModelAndView("redirect:panel");
     }
 
     @DeleteMapping
     public String deleteOrder(@RequestParam Long orderId){
         oService.delete(orderId);
-        return "redirect:/panel";
+        return "redirect:panel";
     }
 
     @GetMapping("/items")
     public ModelAndView renderItemPage(Pageable pageable, HttpServletRequest request){
         var products = prodService.findAll(PageRequest.of(pageable.getPageNumber(), 4,Sort.by(Sort.Direction.DESC, "id")));
-        return new ModelAndView("/pages/Items","data", products);
+        return new ModelAndView("pages/Items","data", products);
     }
 
 
@@ -97,7 +96,7 @@ public class PanelController {
             dto = prodService.findById(Long.parseLong(id));
         }
 
-        return new ModelAndView("/pages/ItemForm","productDTO",dto);
+        return new ModelAndView("pages/ItemForm","productDTO",dto);
     }
 
     @PostMapping("/items/creating")
@@ -108,7 +107,7 @@ public class PanelController {
 
         prodService.insert(productDTO);
 
-        return new ModelAndView("redirect:/panel/items");
+        return new ModelAndView("redirect:panel/items");
     }
 
     // Nome do objeto tem que ser igual ao nome da classe com a primeira letra minuscula
@@ -120,25 +119,25 @@ public class PanelController {
         }
 
         prodService.update(productDTO,Long.parseLong(id));
-        return new ModelAndView("redirect:/panel/items");
+        return new ModelAndView("redirect:panel/items");
     }
 
 
     @GetMapping("/payloads")
     public ModelAndView renderPayloads(Pageable pageable){
         var data = pService.findAll(PageRequest.of(pageable.getPageNumber(), 4));
-        return new ModelAndView("/pages/Payloads","data", data);
+        return new ModelAndView("pages/Payloads","data", data);
     }
 
     @DeleteMapping("/payloads")
     public String deliverPayload(@RequestParam String id, RedirectAttributes attributes){
         pService.deliverOrder(id);
-        return "redirect:/panel/payloads";
+        return "redirect:panel/payloads";
     }
 
     @DeleteMapping("/items/{id}")
     public String deleteItem(@PathVariable Long id){
         prodService.delete(id);
-        return "redirect:/panel/items";
+        return "redirect:panel/items";
     }
 }
