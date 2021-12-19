@@ -55,7 +55,7 @@ public class HomeController {
     }
 
     @GetMapping(value = {"/login", "auth.html"})
-    public String loadLoginView() throws IOException {
+    public String loadLoginView() {
         return "auth";
     }
 
@@ -88,6 +88,4 @@ public class HomeController {
         }
         return ResponseEntity.accepted().build();
     }
-
-
 }

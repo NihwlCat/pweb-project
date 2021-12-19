@@ -1,0 +1,46 @@
+CREATE TABLE TB_PRODUCT (
+    product_id SERIAL PRIMARY KEY,
+    description VARCHAR(255),
+    name VARCHAR(255),
+    price NUMERIC(10,5),
+    weight NUMERIC(10,5),
+    img_url VARCHAR(255)
+)
+
+CREATE TABLE TB_ORDER (
+    order_id SERIAL PRIMARY KEY,
+    status VARCHAR(255),
+    user_id INTEGER,
+    
+    CONSTRAINT FK_user FOREIGN KEY (user_id) REFERENCES TB_USER(id)
+)
+
+CREATE TABLE TB_PAYLOAD (
+    payload_id SERIAL PRIMARY KEY,
+    destiny VARCHAR(255),
+    distance NUMERIC(10,5),
+    origin VARCHAR(255),
+    price NUMERIC(10,5),
+    username VARCHAR(255),
+    order_id INTEGER,
+    
+    CONSTRAINT FK_order FOREIGN KEY (order_id) REFERENCES TB_ORDER(order_id)
+)
+
+CREATE TABLE TB_USER (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255),
+    nickname VARCHAR(255),
+    password VARCHAR(255),
+    role VARCHAR(255)
+)
+
+CREATE TABLE TB_PRODUCT_ORDER (
+    product_amount INTEGER,
+    product_id INTEGER,
+    order_id INTEGER,
+    
+    CONSTRAINT FK_product FOREIGN KEY (product_id) REFERENCES TB_PRODUCT(product_id),
+    CONSTRAINT FK_order FOREIGN KEY (order_id) REFERENCES TB_ORDER(order_id),
+    PRIMARY KEY(product_id, order_id)
+)
